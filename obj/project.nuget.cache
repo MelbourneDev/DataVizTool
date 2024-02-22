@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "v2T1obi84ty2OkBFSiu/lYPntc2Gb6S5kXD+Q0403HPOCXKD5KO4Vzu3f3ZrRMohY24z2CfkHf9Zlmk8po/NIQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\matth\\OneDrive\\Desktop\\.NET apps\\DataVizTool\\DataViz\\DataViz\\DataViz.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\matth\\.nuget\\packages\\oxyplot.core\\2.1.2\\oxyplot.core.2.1.2.nupkg.sha512",
+    "C:\\Users\\matth\\.nuget\\packages\\oxyplot.wpf\\2.1.2\\oxyplot.wpf.2.1.2.nupkg.sha512",
+    "C:\\Users\\matth\\.nuget\\packages\\oxyplot.wpf.shared\\2.1.2\\oxyplot.wpf.shared.2.1.2.nupkg.sha512"
+  ],
+  "logs": []
+}
