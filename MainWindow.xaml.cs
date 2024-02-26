@@ -15,6 +15,8 @@ using OxyPlot.Series;
 using System.IO;
 using System.Diagnostics;
 using Microsoft.Win32;
+using DataViz.Classes;
+using DataViz.Interfaces;
 
 
 namespace DataViz
@@ -24,7 +26,6 @@ namespace DataViz
     /// </summary>
     public partial class MainWindow : Window
     {
-
         private Dictionary<string, List<string>> data = new Dictionary<string, List<string>>();
 
         public MainWindow()
@@ -62,15 +63,10 @@ namespace DataViz
         {
             // Create OpenFileDialog
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-
-            // Set filter for file extension and default file extension 
+             
             dlg.DefaultExt = ".csv";
-            dlg.Filter = "CSV Files (*.csv)|*.csv|All Files (*.*)|*.*";
-
-            // Display OpenFileDialog by calling ShowDialog method 
-            Nullable<bool> result = dlg.ShowDialog();
-
-            // Get the selected file name and display in a TextBox
+            dlg.Filter = "CSV Files (*.csv)|*.csv|All Files (*.*)|*.*";           
+            Nullable<bool> result = dlg.ShowDialog();            
             if (result == true)
             {
                 // Open document
@@ -90,7 +86,7 @@ namespace DataViz
 
             if (lines.Length > 0)
             {
-                // Split the header line into column names
+                // split the header line into column names
                 var headers = lines[0].Split(',');
 
                 foreach (var header in headers)
@@ -103,12 +99,12 @@ namespace DataViz
                 {
                     var values = lines[i].Split(',');
 
-                    // Ensure the values array is not shorter than the headers array
+                    //  array is not shorter than the headers array
                     if (values.Length >= headers.Length)
                     {
                         for (int j = 0; j < headers.Length; j++)
                         {
-                            // Safely add value or an empty string if the value is missing
+                            // add value or an empty string if the value is missing
                             data[headers[j]].Add(values.Length > j ? values[j] : "");
                         }
                     }
@@ -131,7 +127,7 @@ namespace DataViz
 
             foreach (var entry in data)
             {
-                // Assuming the first row (after header) is representative for type checking
+                
                 bool isNumeric = double.TryParse(entry.Value.FirstOrDefault(), out _);
                 if (isNumeric)
                 {
@@ -166,97 +162,63 @@ namespace DataViz
                 string fieldName = (string)e.Data.GetData(DataFormats.StringFormat);
                 // For simplicity, directly calling GenerateVisualization for any field dropped
                 // Assuming a default category for demonstration
-                GenerateVisualization(fieldName, "YourCategoricalField"); // Replace "YourCategoricalField" as needed
+                GenerateVisualization(fieldName, "YourCategoricalField", currentChartType);
             }
         }
 
 
-        private void GenerateBarChart(PlotModel model, List<string> fields)
+
+        private string selectedNumericalField = null;
+        private string selectedCategoricalField = null;
+        private void GenerateVisualization(string categoricalField, string numericalField, string chartType)
         {
-            // Assuming the first field is categorical and the second is numerical
-            var categoryAxis = new CategoryAxis { Position = AxisPosition.Left }; // For vertical bars, use Left or Right
-            var valueAxis = new LinearAxis { Position = AxisPosition.Bottom, MinimumPadding = 0, AbsoluteMinimum = 0 };
-
-            // Configure axes
-            model.Axes.Add(categoryAxis);
-            model.Axes.Add(valueAxis);
-
-            var series = new BarSeries(); // Use BarSeries instead of ColumnSeries
-
-            // Example logic to populate series based on fields
-            // This example assumes 'fields' contains at least one categorical and one numerical field
-            if (fields.Count >= 2 && data.ContainsKey(fields[0]) && data.ContainsKey(fields[1]))
-            {
-                string categoricalField = fields[0];
-                string numericalField = fields[1];
-
-                foreach (var category in data[categoricalField].Distinct())
-                {
-                    var index = data[categoricalField].IndexOf(category);
-                    if (index != -1 && index < data[numericalField].Count)
-                    {
-                        if (double.TryParse(data[numericalField][index], out double value))
-                        {
-                            // For BarSeries, you add BarItems
-                            series.Items.Add(new BarItem { Value = value });
-                            // In a vertical bar chart, categories go on the Y-axis
-                            categoryAxis.Labels.Add(category);
-                        }
-                    }
-                }
-            }
-
-            model.Series.Add(series);
-        }
-
-
-        private void GenerateVisualization(string categoricalField, string numericalField)
-        {
-            if (!data.ContainsKey(numericalField) || !data.ContainsKey(categoricalField)) return;
-
             var model = new PlotModel { Title = "Generated Visualization" };
 
-            // Ensuring that a CategoryAxis is on the Y-axis
-            var categoryAxis = new CategoryAxis { Position = AxisPosition.Left };
-            categoryAxis.Title = categoricalField;
 
-            // Ensuring that a LinearAxis (or other suitable numerical axis) is on the X-axis
-            var valueAxis = new LinearAxis { Position = AxisPosition.Bottom, MinimumPadding = 0, AbsoluteMinimum = 0 };
-            valueAxis.Title = numericalField;
+            IChartVisualization chartVisualization = null;
 
-            model.Axes.Add(categoryAxis);
-            model.Axes.Add(valueAxis);
-
-            var series = new BarSeries();
-
-            foreach (var category in data[categoricalField].Distinct())
+            switch (chartType)
             {
-                var index = data[categoricalField].IndexOf(category);
-                if (index != -1 && index < data[numericalField].Count)
-                {
-                    if (double.TryParse(data[numericalField][index], out double value))
-                    {
-                        series.Items.Add(new BarItem { Value = value });
-                        categoryAxis.Labels.Add(category);
-                    }
-                }
+                case "Bar":
+                    chartVisualization = new BarChartVisualization();
+                    break;
+                case "Line":
+                    // chartVisualization = new LineChartVisualization();
+                    break;
+                case "Pie":
+                    chartVisualization = new PieChartVisualization();
+                    break;
+                default:
+                    throw new NotImplementedException($"Chart type {chartType} is not supported.");
             }
 
-            model.Series.Add(series);
-            plotView.Model = model;
+            Debug.WriteLine($"Generating {chartType} chart...");
+            if (chartVisualization != null)
+            {
+                chartVisualization.GenerateVisualization(model, data, categoricalField, numericalField);
+                plotView.Model = model;
+            }
+            else
+            {
+                
+                Debug.WriteLine("No chart visualization selected or an unrecognized chart type provided.");
+            }
+
+            lastSelectedCategoricalField = categoricalField;
+            lastSelectedNumericalField = numericalField;
         }
 
 
         // Field selections stored to keep track of user choices
-        private string selectedNumericalField = null;
-        private string selectedCategoricalField = null;
+       
 
         private void VisualizationArea_Drop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.StringFormat))
             {
                 string fieldName = (string)e.Data.GetData(DataFormats.StringFormat);
-                // Determine field type and store selection
+
+                // Determine if the dropped field is numerical or categorical
                 if (lstNumerical.Items.Contains(fieldName))
                 {
                     selectedNumericalField = fieldName;
@@ -266,12 +228,13 @@ namespace DataViz
                     selectedCategoricalField = fieldName;
                 }
 
-                // If both fields have been selected, generate the visualization
+                // Check if both a numerical and a categorical field have been selected
                 if (selectedNumericalField != null && selectedCategoricalField != null)
                 {
-                    GenerateVisualization(selectedCategoricalField, selectedNumericalField);
+                    // Call GenerateVisualization with the selected fields
+                    GenerateVisualization(selectedCategoricalField, selectedNumericalField, currentChartType);
 
-                    // Reset selections for next visualization
+                    // Reset the selected fields for the next visualization
                     selectedNumericalField = null;
                     selectedCategoricalField = null;
                 }
@@ -279,8 +242,30 @@ namespace DataViz
         }
 
 
+        private string currentChartType = "Bar"; // Default chart type
+        private string lastSelectedNumericalField = null;
+        private string lastSelectedCategoricalField = null;
+
+        private void ChartTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (chartTypeComboBox.SelectedItem is ComboBoxItem selectedItem)
+            {
+                currentChartType = selectedItem.Content.ToString();
+                Debug.WriteLine($"Selected chart type: {currentChartType}");
+
+                // Trigger visualization update if fields have already been selected
+                if (!string.IsNullOrEmpty(lastSelectedNumericalField) && !string.IsNullOrEmpty(lastSelectedCategoricalField))
+                {
+                    GenerateVisualization(lastSelectedCategoricalField, lastSelectedNumericalField, currentChartType);
+                }
+            }
+        }
+
+
+
 
 
     }
+
 
 }

@@ -22,3 +22,4 @@ C:\Users\matth\OneDrive\Desktop\.NET apps\DataVizTool\DataViz\DataViz\obj\Debug\
 C:\Users\matth\OneDrive\Desktop\.NET apps\DataVizTool\DataViz\DataViz\obj\Debug\net8.0-windows\DataViz.pdb
 C:\Users\matth\OneDrive\Desktop\.NET apps\DataVizTool\DataViz\DataViz\obj\Debug\net8.0-windows\DataViz.genruntimeconfig.cache
 C:\Users\matth\OneDrive\Desktop\.NET apps\DataVizTool\DataViz\DataViz\obj\Debug\net8.0-windows\ref\DataViz.dll
+C:\Users\matth\OneDrive\Desktop\.NET apps\DataVizTool\DataViz\DataViz\obj\Debug\net8.0-windows\DataViz.sourcelink.json

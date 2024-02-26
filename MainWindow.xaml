@@ -3,36 +3,63 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:oxy="http://oxyplot.org/wpf"
         Title="Data Visualization Tool" Height="450" Width="800">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#007ACC"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#005C99"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Width" Value="120"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="Margin" Value="10,0"/>
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="410,5,10,5"/>
+            <Setter Property="Width" Value="120"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+        </Style>
+        <Style TargetType="ListBox">
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+        <Style TargetType="TextBlock">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
-            <!-- Fields and plot area -->
             <RowDefinition Height="Auto" />
-            <!-- Load CSV button -->
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*" />
-            <!-- Fields area -->
-            <ColumnDefinition Width="6*" />
-            <!-- Plot area -->
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <!-- Fields List Area -->
-        <StackPanel Grid.Row="0" Grid.Column="0">
+        <StackPanel Grid.Row="0" Grid.Column="0" Background="#F5F5F5">
             <TextBlock Text="Numerical Fields:" FontWeight="Bold" />
-            <ListBox x:Name="lstNumerical" Margin="5" />
+            <ListBox x:Name="lstNumerical"/>
             <TextBlock Text="Categorical Fields:" FontWeight="Bold" />
-            <ListBox x:Name="lstCategorical" Margin="5" />
+            <ListBox x:Name="lstCategorical"/>
         </StackPanel>
 
         <!-- Plot Area -->
-        <Grid Grid.Row="0" Grid.Column="1" AllowDrop="True" Drop="VisualizationArea_Drop">
-            <oxy:PlotView x:Name="plotView" />
-        </Grid>
+        <Border Grid.Row="0" Grid.Column="1" AllowDrop="True" Drop="VisualizationArea_Drop" BorderBrush="#D3D3D3" BorderThickness="1">
+            <oxy:PlotView x:Name="plotView"/>
+        </Border>
 
-        <!-- Load CSV Button -->
-        <Button x:Name="btnLoadFile" Content="Load CSV File" Click="btnLoadFile_Click" 
-                Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
-                Height="30" Width="100" HorizontalAlignment="Left" Margin="10" />
+
+
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="2" Background="#E1E1E1">
+            <Button x:Name="btnLoadFile" Content="Load CSV File" Click="btnLoadFile_Click"/>
+            <ComboBox x:Name="chartTypeComboBox" SelectionChanged="ChartTypeComboBox_SelectionChanged">
+                <ComboBoxItem Content="Bar" IsSelected="True"/>
+                <ComboBoxItem Content="Pie"/>
+            </ComboBox>
+        </StackPanel>
     </Grid>
 </Window>

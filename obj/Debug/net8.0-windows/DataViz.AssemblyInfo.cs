@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DataViz")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+22c8e959710550dfc050e543cb32d856b806121d")]
 [assembly: System.Reflection.AssemblyProductAttribute("DataViz")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DataViz")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
